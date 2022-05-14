@@ -1,15 +1,14 @@
 package com.example.songkickprojektanz.widgets
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,9 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.rememberAsyncImagePainter
-import com.example.songkickprojektanz.ui.theme.Accent_orange
-import com.example.songkickprojektanz.ui.theme.Accent_pink
-import com.example.songkickprojektanz.ui.theme.Black_light
+import com.example.songkickprojektanz.ui.theme.*
 import com.example.songkickprojektanz.utils.fonts
 
 @Composable
@@ -106,45 +103,6 @@ fun FavoriteButton(
 
 }
 
-@Composable
-fun AppDialog(
-    modifier: Modifier = Modifier,
-    dialogState: Boolean = false,
-    onDialogPositiveButtonClicked: (() -> Unit)? = null,
-    onDialogStateChange: ((Boolean) -> Unit)? = null,
-    onDismissRequest: (() -> Unit)? = null,
-) {
-    val textPaddingAll = 24.dp
-    val buttonPaddingAll = 8.dp
-    val dialogShape = RoundedCornerShape(16.dp)
-
-    if (dialogState) {
-        AlertDialog(
-            onDismissRequest = {
-                onDialogStateChange?.invoke(false)
-                onDismissRequest?.invoke()
-            },
-            title = null,
-            text = null,
-            buttons = {
-
-                Column {
-
-                    Text(text = "Track", color = MaterialTheme.colors.onSurface)
-                    Divider(color = MaterialTheme.colors.onSurface, thickness = 1.dp)
-                    Text(text = "Track", color = MaterialTheme.colors.onSurface)
-                    Divider(color = MaterialTheme.colors.onSurface, thickness = 1.dp)
-                    Text(text = "Track", color = MaterialTheme.colors.onSurface)
-                    Divider(color = MaterialTheme.colors.onSurface, thickness = 1.dp)
-                }
-
-            },
-            properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = false),
-            modifier = modifier,
-            shape = dialogShape
-        )
-    }
-}
 
 @Composable
 fun CustomDialogScrollable(
@@ -159,128 +117,112 @@ fun CustomDialogScrollable(
             color = Black_light,
             modifier = Modifier
                 .wrapContentHeight()
-                .fillMaxWidth(.8f)
+                .fillMaxWidth(.9f)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+
 
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .weight(weight = 1f, fill = false)
-                        .padding(vertical = 16.dp),
+                        .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceAround
                 ) {
-                    Card(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(horizontal = 5.dp, vertical = 5.dp),
-                        shape = RoundedCornerShape(15.dp),
-                        elevation = 5.dp
-                    ) {
-                        Box(modifier = Modifier.height(120.dp)) {
-                            Image(
-                                painter = rememberAsyncImagePainter(
-                                    model = coil.request.ImageRequest.Builder(context = LocalContext.current)
-                                        .crossfade(true)
-                                        .data("https://m.media-amazon.com/images/M/MV5BMDdmMTBiNTYtMDIzNi00NGVlLWIzMDYtZTk3MTQ3NGQxZGEwXkEyXkFqcGdeQXVyMzMwOTU5MDk@._V1_.jpg")
-                                        .build(),
-                                    filterQuality = FilterQuality.High,
-                                    contentScale = ContentScale.FillBounds
-
-                                ),
-                                contentDescription = null,
-                                contentScale = ContentScale.FillBounds,
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .clip(shape = RoundedCornerShape(6.dp))
-
-
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(
-                                        brush = Brush.verticalGradient(
-                                            colors = listOf(
-                                                Color.Transparent,
-                                                Color.Black
-                                            ),
-                                            startY = 300f
-                                        )
-                                    )
-                            )
-                        }
-                    }
-                    Text(
-                        text = "Track",
-                        color = MaterialTheme.colors.onSurface,
-                        modifier = Modifier.padding(bottom = 5.dp),
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = fonts,
-                        fontSize = 22.sp
-                    )
-                    Divider(color = MaterialTheme.colors.onSurface, thickness = 1.dp)
-                    Text(
-                        text = "Track",
-                        color = MaterialTheme.colors.onSurface,
-                        modifier = Modifier.padding(bottom = 5.dp),
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = fonts,
-                        fontSize = 22.sp
-                    )
-                    Divider(color = MaterialTheme.colors.onSurface, thickness = 1.dp)
-                    Text(
-                        text = "Track",
-                        color = MaterialTheme.colors.onSurface,
-                        modifier = Modifier.padding(bottom = 5.dp),
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = fonts,
-                        fontSize = 22.sp,
-
-                    )
-                    Divider(color = MaterialTheme.colors.onSurface, thickness = 1.dp)
-                   TextButton(
-                        onClick = onDismiss,
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                        shape = RoundedCornerShape(25.dp),
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .wrapContentHeight()
-
-                    ) {
-                        Text(
-                            text = "Track ASAP",
-                            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-                            fontWeight = FontWeight.Medium,
-                            fontFamily = fonts,
-                            fontSize = 18.sp,
-                            color = Accent_orange
-
-                            )
-                    }
-                    Divider(color = MaterialTheme.colors.onSurface, thickness = 1.dp)
-                    Button(
-                        onClick = onDismiss,
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Accent_pink),
-                        shape = RoundedCornerShape(25.dp),
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .wrapContentHeight()
-
-                    ) {
-                        Text(
-                            text = "Track ASAP",
-                            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-                            fontWeight = FontWeight.Medium,
-                            fontFamily = fonts,
-                            fontSize = 18.sp,
-
-                        )
-                    }
+                    DialogImageItem()
+                    DialogTextButtonItem(onDismiss , text = "View Concert" ,color = White, buttonColors = Color.Transparent)
+                    Divider(color = Grey_light, thickness = 1.dp)
+                    DialogTextButtonItem(onDismiss , text = "Share" ,color = White, buttonColors = Color.Transparent)
+                    Divider(color = Grey_light, thickness = 1.dp)
+                    DialogTextButtonItem(onDismiss , text = "Save as Interested" ,color = White, buttonColors = Color.Transparent)
+                    Divider(color = Grey_light, thickness = 1.dp)
+                    DialogTextButtonItem(onDismiss , text = "Cancel" ,color = Accent_orange, buttonColors = Color.Transparent)
+                    Divider(color = Grey_light, thickness = 1.dp)
+                    Spacer(modifier = Modifier.padding(top = 10.dp))
+                   DialogTextButtonItem(onDismiss, text = "Track This Artist" , color = colors.onPrimary, buttonColors = Accent_pink)
+                    Spacer(modifier = Modifier.padding(top = 10.dp))
                 }
-            }
+
+        }
+    }
+}
+
+@Composable
+fun DialogTextItem(text: String) {
+    Text(
+        text = text,
+        color = MaterialTheme.colors.onSurface,
+        modifier = Modifier.padding(10.dp),
+        fontWeight = FontWeight.Medium,
+        fontFamily = fonts,
+        fontSize = 22.sp
+    )
+    Divider(color = Grey_light, thickness = 1.dp, )
+}
+
+@Composable
+fun DialogTextButtonItem( onDismiss: () -> Unit,text: String, color: Color, buttonColors: Color){
+    TextButton(
+        onClick = onDismiss,
+        colors = ButtonDefaults.buttonColors(backgroundColor = buttonColors),
+        shape = RoundedCornerShape(25.dp),
+        modifier = Modifier
+            .wrapContentWidth()
+            .wrapContentHeight()
+            
+
+    ) {
+        Text(
+            text = text,
+          //  modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+            fontWeight = FontWeight.Medium,
+            fontFamily = fonts,
+            fontSize = 18.sp,
+            color = color
+
+        )
+    }
+}
+
+@Composable
+fun DialogImageItem(){
+    Card(
+        modifier = Modifier
+            .height(300.dp)
+            .width(200.dp)
+            .padding(horizontal = 5.dp, vertical = 50.dp),
+        shape = RoundedCornerShape(15.dp),
+        elevation = 5.dp
+    ) {
+        Box(modifier = Modifier.wrapContentHeight()) {
+            Image(
+                painter = rememberAsyncImagePainter(
+                    model = coil.request.ImageRequest.Builder(context = LocalContext.current)
+                        .crossfade(true)
+                        .data("https://m.media-amazon.com/images/M/MV5BMDdmMTBiNTYtMDIzNi00NGVlLWIzMDYtZTk3MTQ3NGQxZGEwXkEyXkFqcGdeQXVyMzMwOTU5MDk@._V1_.jpg")
+                        .build(),
+                    filterQuality = FilterQuality.High,
+                    contentScale = ContentScale.FillBounds
+
+                ),
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .clip(shape = RoundedCornerShape(6.dp))
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Black
+                            ),
+                            startY = 300f
+                        )
+                    )
+            )
         }
     }
 }
