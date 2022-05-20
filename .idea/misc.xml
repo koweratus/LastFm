@@ -3,10 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/User/AndroidStudioProjects/SongkickProjektanz/app/src/main/res/drawable/ic_expand_less.xml" value="0.1" />
         <entry key="..\:/Users/User/AndroidStudioProjects/SongkickProjektanz/app/src/main/res/drawable/ic_favourite.xml" value="0.1585" />
         <entry key="..\:/Users/User/AndroidStudioProjects/SongkickProjektanz/app/src/main/res/drawable/ic_home.xml" value="0.1585" />
         <entry key="..\:/Users/User/AndroidStudioProjects/SongkickProjektanz/app/src/main/res/font/merienda_fontfamily.xml" value="0.1" />
         <entry key="..\:/Users/User/AndroidStudioProjects/SongkickProjektanz/app/src/main/res/layout/layo.xml" value="0.33" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/SongkickProjektanz/app/src/main/res/layout/youtube_layout.xml" value="0.16621376811594202" />
         <entry key="..\:/Users/User/AndroidStudioProjects/SongkickProjektanz/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.133" />
       </map>
     </option>

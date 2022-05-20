@@ -1,55 +1,80 @@
 package com.example.songkickprojektanz.screens.home
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import android.annotation.SuppressLint
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import coil.compose.rememberAsyncImagePainter
+import com.example.songkickprojektanz.Constants.COLLAPSE_ANIMATION_DURATION
+import com.example.songkickprojektanz.Constants.EXPAND_ANIMATION_DURATION
+import com.example.songkickprojektanz.Constants.FADE_IN_ANIMATION_DURATION
+import com.example.songkickprojektanz.Constants.FADE_OUT_ANIMATION_DURATION
+import com.example.songkickprojektanz.R
+import com.example.songkickprojektanz.model.Artist
+import com.example.songkickprojektanz.navigation.RootScreen
+import com.example.songkickprojektanz.paging.Resource
+import com.example.songkickprojektanz.remote.responses.TopAlbumResponse
+import com.example.songkickprojektanz.ui.theme.Black_light
 import com.example.songkickprojektanz.ui.theme.Grey_light
+import com.example.songkickprojektanz.ui.theme.White
 import com.example.songkickprojektanz.utils.fonts
-import com.example.songkickprojektanz.widgets.CustomChip
 import com.example.songkickprojektanz.widgets.CustomDialogScrollable
 import com.example.songkickprojektanz.widgets.FavoriteButton
-import com.google.accompanist.pager.*
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.pagerTabIndicatorOffset
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
+/*
 @OptIn(ExperimentalFoundationApi::class)
 @ExperimentalPagerApi
 @Composable
 fun HomeScreen() {
+    val viewModel: HomeViewModel = hiltViewModel()
+    val popularMovies = viewModel.trendingMoviesDay.collectAsLazyPagingItems()
 
     val pagerStateFirstTab = rememberPagerState(initialPage = 0)
     val listSecondTab = listOf("Movies", "Tv")
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(1f)
             .wrapContentHeight()
-            .padding(top = 20.dp)
+            .padding(top = 20.dp),
+
     )
     {
         val textChipRememberOneState = remember {
@@ -103,22 +128,57 @@ fun HomeScreen() {
                 fontWeight = FontWeight.Medium
             )
         }
-        TabsContent(pagerState = pagerStateFirstTab, listSecondTab.size)
+
+            TabsContent(pagerState = pagerStateFirstTab, listSecondTab.size,
+                popularMovies)
+
         Spacer(modifier = Modifier.padding(10.dp))
 
 
     }
 }
+*/
+
+@ExperimentalCoroutinesApi
+@Composable
+fun HomeScreen(
+    navController: NavController,
+) {
+    val viewModel: HomeViewModel = hiltViewModel()
+    val expandedCardIds = viewModel.expandedCardIdsList.collectAsState()
+    val topArtists = viewModel.topArtists.collectAsLazyPagingItems()
+
+    Scaffold(
+        backgroundColor = Color(
+            ContextCompat.getColor(
+                LocalContext.current,
+                R.color.black_light
+            )
+        )
+    ) {
+        LazyColumn {
+            items(topArtists) { item ->
+                ExpandableCard(
+                    card = item!!,
+                    onCardArrowClick = { viewModel.onCardArrowClicked(item.listeners.toInt()) },
+                    expanded = expandedCardIds.value.contains(item.listeners.toInt()),
+                    navController,
+                    artistName = item.name
+                )
+            }
+        }
+    }
+}
 
 @ExperimentalPagerApi
 @Composable
-fun TabsContent(pagerState: PagerState, count: Int) {
+fun TabsContent(pagerState: PagerState, count: Int, list: LazyPagingItems<Artist>) {
 
     HorizontalPager(count, state = pagerState, verticalAlignment = Alignment.Top) { page ->
         when (page) {
-            0 -> RowSectionItem(list = createTestDataList())
-            1 -> RowSectionItem(list = createTestDataList())
-            2 -> RowSectionItem(list = createTestDataList())
+            0 -> RowSectionItem(list)
+            1 -> RowSectionItem(list)
+            2 -> RowSectionItem(list)
         }
     }
 }
@@ -184,60 +244,55 @@ fun Tabs(pagerState: PagerState, list: List<String>) {
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @ExperimentalPagerApi
 @Composable
 fun RowSectionItem(
-    list: List<Movies>
+    list: LazyPagingItems<Artist>
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(start = 10.dp)
+
     ) {
-        LazyVerticalGrid(
-            cells = GridCells.Fixed(2),
+        LazyColumn(
             // content padding
-            contentPadding = PaddingValues(
-                start = 12.dp,
-                top = 16.dp,
-                end = 12.dp,
-                bottom = 64.dp
-            ),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         )
         {
             items(
                 items = list
             ) { item ->
-                RowItem(moviesData = item)
+
+                item?.let { RowItem(moviesData = it) }
+
             }
-
-
         }
     }
 }
 
 @Composable
 fun RowItem(
-    moviesData: Movies
+    moviesData: Artist
 ) {
+    System.out.println(moviesData.name)
     val showDialog = remember { mutableStateOf(false) }
     Card(
         modifier = Modifier
-            .size(width = 30.dp, height = 180.dp)
+            .size(width = 250.dp, height = 150.dp)
             .padding(horizontal = 5.dp, vertical = 5.dp),
         shape = RoundedCornerShape(15.dp),
         elevation = 5.dp
     ) {
-        Box(modifier = Modifier.height(200.dp)) {
+        Box(
+            modifier = Modifier
+                .height(200.dp)
+                .width(250.dp)
+        ) {
+
             Image(
                 painter = rememberAsyncImagePainter(
                     model = coil.request.ImageRequest.Builder(context = LocalContext.current)
                         .crossfade(true)
-                        .data(moviesData.imageUrl)
+                        .data("https://lastfm.freetls.fastly.net/i/u/300x300/3b54885952161aaea4ce2965b2db1638.png")
                         .build(),
                     filterQuality = FilterQuality.High,
                     contentScale = ContentScale.FillBounds
@@ -256,7 +311,6 @@ fun RowItem(
                         }
                     ),
             )
-
             if (showDialog.value) {
                 //AppDialog(dialogState = true, modifier = Modifier.fillMaxSize(.8f))
                 CustomDialogScrollable(
@@ -281,68 +335,202 @@ fun RowItem(
             )
         }
     }
-
 }
 
+@SuppressLint("UnusedTransitionTargetStateParameter")
+@Composable
+fun ExpandableCard(
+    card: Artist,
+    onCardArrowClick: () -> Unit,
+    expanded: Boolean,
+    navController: NavController,
+    artistName: String
+) {
+    val transitionState = remember {
+        MutableTransitionState(expanded).apply {
+            targetState = !expanded
+        }
+    }
+    val transition = updateTransition(transitionState, label = "transition")
+    val cardBgColor by transition.animateColor({
+        tween(durationMillis = EXPAND_ANIMATION_DURATION)
+    }, label = "bgColorTransition") {
+        Black_light
+    }
+    val cardPaddingHorizontal by transition.animateDp({
+        tween(durationMillis = EXPAND_ANIMATION_DURATION)
+    }, label = "paddingTransition") {
+        if (expanded) 48.dp else 24.dp
+    }
+    val cardElevation by transition.animateDp({
+        tween(durationMillis = EXPAND_ANIMATION_DURATION)
+    }, label = "elevationTransition") {
+        if (expanded) 24.dp else 4.dp
+    }
+    val cardRoundedCorners by transition.animateDp({
+        tween(
+            durationMillis = EXPAND_ANIMATION_DURATION,
+            easing = FastOutSlowInEasing
+        )
+    }, label = "cornersTransition") {
+        if (expanded) 0.dp else 16.dp
+    }
+    val arrowRotationDegree by transition.animateFloat({
+        tween(durationMillis = EXPAND_ANIMATION_DURATION)
+    }, label = "rotationDegreeTransition") {
+        if (expanded) 0f else 180f
+    }
+    val viewModel: HomeViewModel = hiltViewModel()
+    val topAlbums = produceState<Resource<TopAlbumResponse>>(initialValue = Resource.Loading()) {
+        value = viewModel.initArtistsTopAlbums(card.name)
+    }.value
 
-fun createTestDataList(): List<Movies> {
-    val list = mutableListOf<Movies>()
-    val actors = listOf("Robert Downey Jr.", "Terrance Howard", "Mate Kovilic", "Mi vi oni")
+    Card(
+        backgroundColor = cardBgColor,
+        contentColor = colorResource(id = R.color.accent_red),
+        elevation = cardElevation,
+        shape = RoundedCornerShape(cardRoundedCorners),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                horizontal = cardPaddingHorizontal,
+                vertical = 8.dp
+            )
+    ) {
+        Column(Modifier.wrapContentHeight()) {
 
-    list.add(
-        Movies(
-            "Iron Man",
-            actors,
-            "https://upload.wikimedia.org/wikipedia/en/0/02/Iron_Man_%282008_film%29_poster.jpg"
-        )
-    )
-    list.add(
-        Movies(
-            "Iron Man 2",
-            actors,
-            "https://upload.wikimedia.org/wikipedia/en/e/ed/Iron_Man_2_poster.jpg"
-        )
-    )
-    list.add(
-        Movies(
-            "Iron Man 3",
-            actors,
-            "https://m.media-amazon.com/images/M/MV5BMjE5MzcyNjk1M15BMl5BanBnXkFtZTcwMjQ4MjcxOQ@@._V1_.jpg"
-        )
-    )
-    list.add(
-        Movies(
-            "Batman 3",
-            actors,
-            "https://m.media-amazon.com/images/M/MV5BMTk4ODQzNDY3Ml5BMl5BanBnXkFtZTcwODA0NTM4Nw@@._V1_FMjpg_UX1000_.jpg"
-        )
-    )
-    list.add(
-        Movies(
-            "Batman 2",
-            actors,
-            "https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_film%29.jpg"
-        )
-    )
-    list.add(
-        Movies(
-            "Batman",
-            actors,
-            "https://m.media-amazon.com/images/M/MV5BMDdmMTBiNTYtMDIzNi00NGVlLWIzMDYtZTk3MTQ3NGQxZGEwXkEyXkFqcGdeQXVyMzMwOTU5MDk@._V1_.jpg"
-        )
-    )
-    list.add(
-        Movies(
-            "Joker",
-            actors,
-            "https://m.media-amazon.com/images/M/MV5BNGVjNWI4ZGUtNzE0MS00YTJmLWE0ZDctN2ZiYTk2YmI3NTYyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg"
-        )
-    )
-    return list
+            Box {
+                CardArrow(
+                    degrees = arrowRotationDegree,
+                    onClick = onCardArrowClick
+                )
+                CardTitle(title = card.name)
+            }
+            topAlbums.data?.topAlbums?.album?.take(5)?.forEach {
+
+                ExpandableContent(
+                    visible = expanded,
+                    albumName = it.name,
+                    albumCoverArt = it.image[0].photoUrl,
+                    navController = navController,
+                    artistName = artistName
+                )
+
+            }
+
+
+        }
+
+    }
 }
 
-data class Movies(
-    val description: String,
-    val actors: List<String>,
-    val imageUrl: String
-)
+@Composable
+fun CardArrow(
+    degrees: Float,
+    onClick: () -> Unit
+) {
+    IconButton(
+        onClick = onClick,
+        content = {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_expand_less),
+                contentDescription = "Expandable Arrow",
+                modifier = Modifier.rotate(degrees),
+            )
+        }
+    )
+}
+
+@Composable
+fun CardTitle(title: String) {
+    Text(
+        text = title,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        textAlign = TextAlign.Center,
+    )
+}
+
+@Composable
+fun ExpandableContent(
+    visible: Boolean = true,
+    albumName: String,
+    albumCoverArt: String,
+    navController: NavController,
+    artistName: String
+
+) {
+    val enterFadeIn = remember {
+        fadeIn(
+            animationSpec = TweenSpec(
+                durationMillis = FADE_IN_ANIMATION_DURATION,
+                easing = FastOutLinearInEasing
+            )
+        )
+    }
+    val enterExpand = remember {
+        expandVertically(animationSpec = tween(EXPAND_ANIMATION_DURATION))
+    }
+    val exitFadeOut = remember {
+        fadeOut(
+            animationSpec = TweenSpec(
+                durationMillis = FADE_OUT_ANIMATION_DURATION,
+                easing = LinearOutSlowInEasing
+            )
+        )
+    }
+    val exitCollapse = remember {
+        shrinkVertically(animationSpec = tween(COLLAPSE_ANIMATION_DURATION))
+    }
+    AnimatedVisibility(
+        visible = visible,
+        enter = enterExpand + enterFadeIn,
+        exit = exitCollapse + exitFadeOut
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+        ) {
+            //Spacer(modifier = Modifier.heightIn(100.dp))
+            Row(
+                modifier = Modifier.clickable(
+                    interactionSource = MutableInteractionSource(),
+                    indication = rememberRipple(bounded = true, color = Color.Black),
+                    onClick = {
+                        navController.navigate("${RootScreen.AlbumInfo.route}/${artistName}/${albumName}")
+                    }
+                ),
+            ) {
+                Box(modifier = Modifier.wrapContentHeight()) {
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            model = coil.request.ImageRequest.Builder(context = LocalContext.current)
+                                .crossfade(true)
+                                .data(albumCoverArt)
+                                .build(),
+                            filterQuality = FilterQuality.High,
+                            contentScale = ContentScale.FillBounds
+
+                        ),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .height(50.dp)
+                            .width(50.dp)
+                            .clip(shape = RoundedCornerShape(6.dp))
+                    )
+                }
+                Text(
+                    text = albumName,
+                    textAlign = TextAlign.Center,
+                    color = White,
+                    fontFamily = fonts,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp
+                )
+            }
+            Divider(color = Grey_light, thickness = 1.dp)
+        }
+    }
+}

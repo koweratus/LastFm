@@ -120,7 +120,7 @@ fun TopBar(navController: NavController) {
             contentColor = colorResource(R.color.white),
         )
         Image(
-            painterResource(R.drawable.by_songkick_pink),
+            painterResource(R.drawable.lastfm_logo),
             contentDescription = "",
             contentScale = ContentScale.Fit,
             modifier = Modifier

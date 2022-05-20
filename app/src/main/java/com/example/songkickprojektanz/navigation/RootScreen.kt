@@ -9,11 +9,19 @@ sealed class RootScreen(
         title = "Main"
     )
 
-    object ConcertDetails : RootScreen(
-        route = "concert_details_screen",
-        title = "Concert Details"
+    object AlbumInfo : RootScreen(
+        route = "album_info_screen",
+        title = "Album Info"
     ) {
+        const val ARTIST_NAME = "artistName"
+        const val ALBUM_NAME = "albumName"
+    }
 
-        const val ARGUMENT_ID = "id"
+    object TrackInfo : RootScreen(
+        route = "track_info_screen",
+        title = "Track Info"
+    ) {
+        const val ARTIST_NAME = "artistName"
+        const val TRACK_NAME = "trackName"
     }
 }

@@ -1,15 +1,19 @@
 package com.example.songkickprojektanz.navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.songkickprojektanz.screens.favourites.FavouriteScreen
 import com.example.songkickprojektanz.screens.home.HomeScreen
+import com.google.accompanist.pager.ExperimentalPagerApi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
-@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class,
-    com.google.accompanist.pager.ExperimentalPagerApi::class
+@OptIn(
+    ExperimentalFoundationApi::class,
+    ExperimentalPagerApi::class, ExperimentalCoroutinesApi::class
 )
 @Composable
 fun BottomBarNavigationGraph(
@@ -18,7 +22,7 @@ fun BottomBarNavigationGraph(
 ) {
     NavHost(bottomBarNavHostController, startDestination = BottomBarScreen.Home.route) {
         composable(BottomBarScreen.Home.route) {
-            HomeScreen()
+            HomeScreen(rootNavHostController)
         }
         composable(BottomBarScreen.Favourites.route) {
             FavouriteScreen()

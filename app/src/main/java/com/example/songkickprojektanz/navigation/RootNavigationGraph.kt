@@ -8,8 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.songkickprojektanz.MainScren
-import com.example.songkickprojektanz.navigation.RootScreen
-import com.example.songkickprojektanz.screens.details.ConcertDetailsScreen
+import com.example.songkickprojektanz.screens.albumDetails.AlbumInfoScreen
+import com.example.songkickprojektanz.screens.trackDetails.TrackInfoScreen
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -23,15 +23,31 @@ fun RootNavigationGraph(
             MainScren(rootNavHostController)
         }
         composable(
-            route = RootScreen.ConcertDetails.route + "/{${RootScreen.ConcertDetails.ARGUMENT_ID}}",
-            arguments = listOf(navArgument(RootScreen.ConcertDetails.ARGUMENT_ID) {
-                type = NavType.IntType
+            route =  RootScreen.AlbumInfo.route + "/{${RootScreen.AlbumInfo.ARTIST_NAME}}"+ "/{${RootScreen.AlbumInfo.ALBUM_NAME}}",
+            arguments = listOf(navArgument(RootScreen.AlbumInfo.ARTIST_NAME) {
+                type = NavType.StringType
+            }, navArgument(RootScreen.AlbumInfo.ALBUM_NAME){
+                type = NavType.StringType
             })
         ) { entry ->
-            ConcertDetailsScreen(
-
+            AlbumInfoScreen(
+                navController = rootNavHostController,
+                artistName = entry.arguments?.getString(RootScreen.AlbumInfo.ARTIST_NAME).toString(),
+                albumName = entry.arguments?.getString(RootScreen.AlbumInfo.ALBUM_NAME).toString()
             )
         }
-
+        composable(
+            route =  RootScreen.TrackInfo.route + "/{${RootScreen.TrackInfo.ARTIST_NAME}}"+ "/{${RootScreen.TrackInfo.TRACK_NAME}}",
+            arguments = listOf(navArgument(RootScreen.TrackInfo.ARTIST_NAME) {
+                type = NavType.StringType
+            }, navArgument(RootScreen.TrackInfo.TRACK_NAME){
+                type = NavType.StringType
+            })
+        ) { entry ->
+            TrackInfoScreen(
+                artistName = entry.arguments?.getString(RootScreen.TrackInfo.ARTIST_NAME).toString(),
+                trackName = entry.arguments?.getString(RootScreen.TrackInfo.TRACK_NAME).toString()
+            )
+        }
     }
 }
