@@ -16,6 +16,7 @@ import com.example.songkickprojektanz.R
 import com.example.songkickprojektanz.paging.Resource
 import com.example.songkickprojektanz.remote.responses.TrackInfoResponse
 import com.example.songkickprojektanz.widgets.ImageItem
+import com.example.songkickprojektanz.widgets.ImageItemShimmer
 import com.example.songkickprojektanz.widgets.Overview
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
@@ -40,15 +41,19 @@ fun TrackInfoScreen(
     ) {
 
         item {
-            if (info is Resource.Success)
-                PlayTrackOnYoutube(url = info.data?.track!!.url,info.data)
-                Overview(overview = info.data?.track?.wiki?.summary ?: "Overview not available")
+            if(info is Resource.Loading){
+                ImageItemShimmer()
+                ImageItemShimmer()
+            }
+            if (info is Resource.Success){
+                PlayTrackOnYoutube(url = info.data?.track!!.url,info)
+                Overview(overview = info.data?.track?.wiki?.summary ?: "Overview not available")}
         }
     }
 }
 
 @Composable
-fun PlayTrackOnYoutube(url: String, info: TrackInfoResponse) {
+fun PlayTrackOnYoutube(url: String, info: Resource<TrackInfoResponse>) {
     val context = LocalContext.current
     val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
     StrictMode.setThreadPolicy(policy)
@@ -73,12 +78,15 @@ fun PlayTrackOnYoutube(url: String, info: TrackInfoResponse) {
             }
         }, modifier = Modifier.fillMaxSize(1f))
     } else {
-        ImageItem(
-            albumCoverArt = info.track?.album?.image?.get(2)?.photoUrl ?: "https://bobjames.com/wp-content/themes/soundcheck/images/default-album-artwork.png",
-            albumName = info.track.name,
-            albumReleaseDate = info.track?.wiki?.published ?: "Unknown",
-            listeners = info.track.listeners,
-        )
+        when (info){
+       is Resource.Loading -> ImageItemShimmer()
+            is Resource.Success -> ImageItem(
+                albumCoverArt = info.data?.track?.album?.image?.get(2)?.photoUrl ?: "https://bobjames.com/wp-content/themes/soundcheck/images/default-album-artwork.png",
+                albumName = info.data?.track!!.name,
+                albumReleaseDate = info.data?.track?.wiki?.published ?: "Unknown",
+                listeners = info.data.track.listeners,
+            )
+        }
     }
 }
 

@@ -1,10 +1,7 @@
 package com.example.songkickprojektanz.remote
 
 import com.example.songkickprojektanz.BuildConfig.API_KEY
-import com.example.songkickprojektanz.remote.responses.AlbumInfoResponse
-import com.example.songkickprojektanz.remote.responses.TopAlbumResponse
-import com.example.songkickprojektanz.remote.responses.TopArtistResponse
-import com.example.songkickprojektanz.remote.responses.TrackInfoResponse
+import com.example.songkickprojektanz.remote.responses.*
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -41,4 +38,12 @@ interface LastFmApi {
         @Query("track") track: String,
         @Query("format") format: String = "json"
     ): TrackInfoResponse
+
+    @GET("?method=artist.search")
+    suspend fun getSearchResults(
+        @Query("artist") artist: String,
+        @Query("api_key") apiKey: String = API_KEY,
+        @Query("page") page: Int,
+        @Query("format") format: String = "json"
+    ): SearchResponse
 }

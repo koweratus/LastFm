@@ -125,4 +125,5 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.11.1'
     // Youtube player library
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.26'
+    implementation "com.google.accompanist:accompanist-placeholder:0.15.0"
 }

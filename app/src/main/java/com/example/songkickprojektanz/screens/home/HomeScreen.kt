@@ -44,141 +44,86 @@ import com.example.songkickprojektanz.model.Artist
 import com.example.songkickprojektanz.navigation.RootScreen
 import com.example.songkickprojektanz.paging.Resource
 import com.example.songkickprojektanz.remote.responses.TopAlbumResponse
+import com.example.songkickprojektanz.screens.search.SearchScreen
 import com.example.songkickprojektanz.ui.theme.Black_light
 import com.example.songkickprojektanz.ui.theme.Grey_light
 import com.example.songkickprojektanz.ui.theme.White
 import com.example.songkickprojektanz.utils.fonts
 import com.example.songkickprojektanz.widgets.CustomDialogScrollable
 import com.example.songkickprojektanz.widgets.FavoriteButton
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.pagerTabIndicatorOffset
-import kotlinx.coroutines.CoroutineScope
+import com.google.accompanist.pager.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
-/*
-@OptIn(ExperimentalFoundationApi::class)
-@ExperimentalPagerApi
-@Composable
-fun HomeScreen() {
-    val viewModel: HomeViewModel = hiltViewModel()
-    val popularMovies = viewModel.trendingMoviesDay.collectAsLazyPagingItems()
-
-    val pagerStateFirstTab = rememberPagerState(initialPage = 0)
-    val listSecondTab = listOf("Movies", "Tv")
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(1f)
-            .wrapContentHeight()
-            .padding(top = 20.dp),
-
-    )
-    {
-        val textChipRememberOneState = remember {
-            mutableStateOf(false)
-        }
-
-        Tabs(pagerState = pagerStateFirstTab, listSecondTab)
-        Row(
-            modifier = Modifier.padding(start = 10.dp, top = 25.dp),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            // creates a custom chip for active state
-            CustomChip(
-                selected = textChipRememberOneState.value,
-                text = "Location",
-                onChecked = {
-                    textChipRememberOneState.value = it
-                }
-            )
-            // Creates a custom chip for inactive state
-            CustomChip(
-                selected = false,
-                text = "Dates",
-                onChecked = {
-                    textChipRememberOneState.value = it
-                }
-            )
-        }
-        Row(
-            modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            // creates a custom chip for active state
-            Text(
-                text = "March",
-                color = Grey_light,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.body2,
-                modifier = Modifier.padding(8.dp),
-                fontFamily = fonts,
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Medium
-            )
-            Text(
-                text = "16 Concerts",
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.body2,
-                modifier = Modifier.padding(8.dp),
-                fontFamily = fonts,
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
-
-            TabsContent(pagerState = pagerStateFirstTab, listSecondTab.size,
-                popularMovies)
-
-        Spacer(modifier = Modifier.padding(10.dp))
-
-
-    }
-}
-*/
-
+@OptIn(ExperimentalPagerApi::class)
 @ExperimentalCoroutinesApi
 @Composable
 fun HomeScreen(
     navController: NavController,
 ) {
-    val viewModel: HomeViewModel = hiltViewModel()
-    val expandedCardIds = viewModel.expandedCardIdsList.collectAsState()
-    val topArtists = viewModel.topArtists.collectAsLazyPagingItems()
-
     Scaffold(
         backgroundColor = Color(
             ContextCompat.getColor(
                 LocalContext.current,
-                R.color.black_light
+                R.color.black
             )
         )
     ) {
-        LazyColumn {
-            items(topArtists) { item ->
-                ExpandableCard(
-                    card = item!!,
-                    onCardArrowClick = { viewModel.onCardArrowClicked(item.listeners.toInt()) },
-                    expanded = expandedCardIds.value.contains(item.listeners.toInt()),
-                    navController,
-                    artistName = item.name
-                )
-            }
+        val viewModel: HomeViewModel = hiltViewModel()
+        val expandedCardIds = viewModel.expandedCardIdsList.collectAsState()
+        val topArtists = viewModel.topArtists.collectAsLazyPagingItems()
+
+        val pagerStateFirstTab = rememberPagerState(initialPage = 0)
+        val listSecondTab = listOf("Top Artists", "Search...")
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(1f)
+                .wrapContentHeight()
+                .padding(top = 20.dp),
+
+            )
+        {
+
+            Tabs(pagerState = pagerStateFirstTab, listSecondTab)
+            TabsContent(
+                pagerState = pagerStateFirstTab, listSecondTab.size,
+                topArtists, viewModel = viewModel, expandedCardIds = expandedCardIds, navController
+            )
+
         }
+
+        /*  LazyColumn {
+              items(topArtists) { item ->
+                  ExpandableCard(
+                      card = item!!,
+                      onCardArrowClick = { viewModel.onCardArrowClicked(item.listeners.toInt()) },
+                      expanded = expandedCardIds.value.contains(item.listeners.toInt()),
+                      navController,
+                      artistName = item.name
+                  )
+              }
+          }*/
     }
 }
 
 @ExperimentalPagerApi
 @Composable
-fun TabsContent(pagerState: PagerState, count: Int, list: LazyPagingItems<Artist>) {
+fun TabsContent(
+    pagerState: PagerState, count: Int, list: LazyPagingItems<Artist>, viewModel: HomeViewModel,
+    expandedCardIds: State<List<Int>>,
+    navController: NavController
+) {
 
     HorizontalPager(count, state = pagerState, verticalAlignment = Alignment.Top) { page ->
         when (page) {
-            0 -> RowSectionItem(list)
-            1 -> RowSectionItem(list)
-            2 -> RowSectionItem(list)
+            0 -> RowSectionItem(
+                list,
+                navController = navController,
+                expandedCardIds = expandedCardIds,
+                viewModel = viewModel
+            )
+            1 -> SearchScreen(navController)
         }
     }
 }
@@ -247,7 +192,11 @@ fun Tabs(pagerState: PagerState, list: List<String>) {
 @ExperimentalPagerApi
 @Composable
 fun RowSectionItem(
-    list: LazyPagingItems<Artist>
+    list: LazyPagingItems<Artist>,
+    viewModel: HomeViewModel,
+    expandedCardIds: State<List<Int>>,
+    navController: NavController
+
 ) {
     Column(
 
@@ -262,7 +211,13 @@ fun RowSectionItem(
                 items = list
             ) { item ->
 
-                item?.let { RowItem(moviesData = it) }
+                ExpandableCard(
+                    card = item!!,
+                    onCardArrowClick = { viewModel.onCardArrowClicked(item.listeners.toInt()) },
+                    expanded = expandedCardIds.value.contains(item.listeners.toInt()),
+                    navController,
+                    artistName = item.name
+                )
 
             }
         }
@@ -337,6 +292,7 @@ fun RowItem(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
 fun ExpandableCard(
@@ -395,7 +351,8 @@ fun ExpandableCard(
             .padding(
                 horizontal = cardPaddingHorizontal,
                 vertical = 8.dp
-            )
+            ),
+        onClick = onCardArrowClick
     ) {
         Column(Modifier.wrapContentHeight()) {
 
@@ -437,7 +394,8 @@ fun CardArrow(
                 contentDescription = "Expandable Arrow",
                 modifier = Modifier.rotate(degrees),
             )
-        }
+        },
+        modifier = Modifier.padding(start = 270.dp)
     )
 }
 

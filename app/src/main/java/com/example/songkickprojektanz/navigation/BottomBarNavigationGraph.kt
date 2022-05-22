@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.songkickprojektanz.screens.favourites.FavouriteScreen
 import com.example.songkickprojektanz.screens.home.HomeScreen
+import com.example.songkickprojektanz.screens.search.SearchScreen
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -25,7 +26,7 @@ fun BottomBarNavigationGraph(
             HomeScreen(rootNavHostController)
         }
         composable(BottomBarScreen.Favourites.route) {
-            FavouriteScreen()
+            SearchScreen(rootNavHostController)
         }
 
     }

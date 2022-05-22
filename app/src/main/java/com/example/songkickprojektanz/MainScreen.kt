@@ -28,7 +28,7 @@ import com.example.songkickprojektanz.utils.fonts
 
 @ExperimentalFoundationApi
 @Composable
-fun MainScren(navHostController: NavHostController) {
+fun MainScreen(navHostController: NavHostController) {
     val navController = rememberNavController()
     Scaffold(
         bottomBar = { BottomNavigation(navController = navController) },
@@ -48,7 +48,7 @@ fun BottomNavigation(navController: NavController) {
         BottomBarScreen.Favourites
     )
     BottomNavigation(
-        backgroundColor = Black_light,
+        backgroundColor = Black,
         contentColor = Black
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -95,7 +95,6 @@ fun TopBar(navController: NavController) {
             .wrapContentWidth()
             .wrapContentSize()
     ) {
-
         TopAppBar(
             title = {Text(text = "")
 
@@ -128,8 +127,5 @@ fun TopBar(navController: NavController) {
                 .height(50.dp)
                 .fillMaxWidth(.6f)
         )
-
     }
-
-
 }

@@ -37,6 +37,9 @@ import com.example.songkickprojektanz.remote.responses.AlbumInfoResponse
 import com.example.songkickprojektanz.ui.theme.*
 import com.example.songkickprojektanz.utils.fonts
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.placeholder
+import com.google.accompanist.placeholder.shimmer
 
 @Composable
 fun CustomChip(
@@ -263,6 +266,31 @@ fun DialogImageItem() {
 }
 
 @Composable
+fun ImageItemShimmer() {
+    Surface(color = colors.primary, modifier = Modifier.fillMaxSize(1f)) {
+        Card(
+            modifier = Modifier
+                .fillMaxSize(1f)
+                .clickable(
+                    interactionSource = MutableInteractionSource(),
+                    indication = rememberRipple(bounded = true, color = Color.Black),
+                    onClick = { }
+                )
+                .height(300.dp)
+                .placeholder(
+                    visible = true,
+                    highlight = PlaceholderHighlight.shimmer(
+                        highlightColor = Color.White,
+                    ),
+                    color = Color.Gray
+                ),
+
+            elevation = 5.dp
+        ) {}
+    }
+}
+
+@Composable
 fun ImageItem(
     albumCoverArt: String,
     albumName: String,
@@ -396,10 +424,10 @@ fun TopBilledCastItem(
     trackName: String,
     albumCoverArt: String,
     trackDuration: String,
-    artistName : String,
+    artistName: String,
     navController: NavController
 ) {
-    Surface(color = colors.primary, modifier = Modifier.fillMaxSize(1f)) {
+    Surface(color = colors.primaryVariant, modifier = Modifier.fillMaxSize(1f)) {
         Card(
             modifier = Modifier
                 .size(width = 140.dp, height = 220.dp)
@@ -407,12 +435,13 @@ fun TopBilledCastItem(
                 .clickable(
                     interactionSource = MutableInteractionSource(),
                     indication = rememberRipple(bounded = true, color = Color.Black),
-                    onClick = { navController.navigate("${RootScreen.TrackInfo.route}/${artistName}/${trackName}")
+                    onClick = {
+                        navController.navigate("${RootScreen.TrackInfo.route}/${artistName}/${trackName}")
                     }
                 ),
             shape = RoundedCornerShape(6.dp),
             elevation = 15.dp,
-            backgroundColor = colors.primary
+            backgroundColor = colors.primaryVariant
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Image(

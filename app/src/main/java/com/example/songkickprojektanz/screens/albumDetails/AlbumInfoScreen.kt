@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import com.example.songkickprojektanz.paging.Resource
 import com.example.songkickprojektanz.remote.responses.AlbumInfoResponse
 import com.example.songkickprojektanz.widgets.ImageItem
+import com.example.songkickprojektanz.widgets.ImageItemShimmer
 import com.example.songkickprojektanz.widgets.Overview
 import com.example.songkickprojektanz.widgets.TopBilledCastSectionItem
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -30,13 +31,15 @@ fun AlbumInfoScreen(
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         item {
-            if (info is Resource.Success)
-                ImageItem(
+            when(info){
+                is Resource.Loading -> ImageItemShimmer()
+                is Resource.Success-> ImageItem(
                     albumCoverArt = info.data?.albumInfo?.image!![5].photoUrl,
                     albumName = info.data.albumInfo.name,
                     albumReleaseDate = info.data.albumInfo.artist,
                     listeners = info.data.albumInfo.listeners
                 )
+            }
             Overview(overview = info.data?.albumInfo?.wiki?.summary.toString())
             TopBilledCastSectionItem(info.data, navController = navController, artistName)
         }
