@@ -24,31 +24,38 @@ fun RootNavigationGraph(
             MainScreen(rootNavHostController)
         }
         composable(
-            route =  RootScreen.AlbumInfo.route + "/{${RootScreen.AlbumInfo.ARTIST_NAME}}"+ "/{${RootScreen.AlbumInfo.ALBUM_NAME}}",
+            route = RootScreen.AlbumInfo.route + "/{${RootScreen.AlbumInfo.ARTIST_NAME}}" + "/{${RootScreen.AlbumInfo.ALBUM_NAME}}",
             arguments = listOf(navArgument(RootScreen.AlbumInfo.ARTIST_NAME) {
                 type = NavType.StringType
-            }, navArgument(RootScreen.AlbumInfo.ALBUM_NAME){
+            }, navArgument(RootScreen.AlbumInfo.ALBUM_NAME) {
                 type = NavType.StringType
             })
         ) { entry ->
             AlbumInfoScreen(
                 navController = rootNavHostController,
-                artistName = entry.arguments?.getString(RootScreen.AlbumInfo.ARTIST_NAME).toString(),
+                artistName = entry.arguments?.getString(RootScreen.AlbumInfo.ARTIST_NAME)
+                    .toString(),
                 albumName = entry.arguments?.getString(RootScreen.AlbumInfo.ALBUM_NAME).toString()
             )
         }
         composable(
-            route =  RootScreen.TrackInfo.route + "/{${RootScreen.TrackInfo.ARTIST_NAME}}"+ "/{${RootScreen.TrackInfo.TRACK_NAME}}",
+            route = RootScreen.TrackInfo.route + "/{${RootScreen.TrackInfo.ARTIST_NAME}}" + "/{${RootScreen.TrackInfo.TRACK_NAME}}",
             arguments = listOf(navArgument(RootScreen.TrackInfo.ARTIST_NAME) {
                 type = NavType.StringType
-            }, navArgument(RootScreen.TrackInfo.TRACK_NAME){
+            }, navArgument(RootScreen.TrackInfo.TRACK_NAME) {
                 type = NavType.StringType
             })
         ) { entry ->
             TrackInfoScreen(
-                artistName = entry.arguments?.getString(RootScreen.TrackInfo.ARTIST_NAME).toString(),
+                artistName = entry.arguments?.getString(RootScreen.TrackInfo.ARTIST_NAME)
+                    .toString(),
                 trackName = entry.arguments?.getString(RootScreen.TrackInfo.TRACK_NAME).toString()
             )
+        }
+        composable(
+            route = RootScreen.Search.route
+        ) {
+            SearchScreen(navController = rootNavHostController)
         }
     }
 }

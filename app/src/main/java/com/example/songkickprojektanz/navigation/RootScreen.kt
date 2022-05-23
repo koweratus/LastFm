@@ -24,4 +24,9 @@ sealed class RootScreen(
         const val ARTIST_NAME = "artistName"
         const val TRACK_NAME = "trackName"
     }
+
+    object Search : RootScreen(
+        route = "search",
+        title = "Search"
+    )
 }

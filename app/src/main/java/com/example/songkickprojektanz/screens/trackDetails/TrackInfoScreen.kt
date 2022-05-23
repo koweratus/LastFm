@@ -1,28 +1,26 @@
 package com.example.songkickprojektanz.screens.trackDetails
 
-import android.os.StrictMode
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.songkickprojektanz.R
 import com.example.songkickprojektanz.paging.Resource
 import com.example.songkickprojektanz.remote.responses.TrackInfoResponse
+import com.example.songkickprojektanz.widgets.ErrorDisplayingResultsImage
 import com.example.songkickprojektanz.widgets.ImageItem
-import com.example.songkickprojektanz.widgets.ImageItemShimmer
 import com.example.songkickprojektanz.widgets.Overview
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-import okhttp3.internal.wait
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 
 @OptIn(ExperimentalPagerApi::class)
@@ -35,58 +33,64 @@ fun TrackInfoScreen(
     val info = produceState<Resource<TrackInfoResponse>>(initialValue = Resource.Loading()) {
         value = viewModel.initTrackInfo(artistName = artistName, trackName = trackName)
     }.value
+    val context = LocalContext.current
 
     LazyColumn(
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-
         item {
-            if(info is Resource.Loading){
-                ImageItemShimmer()
-                ImageItemShimmer()
+            if (info is Resource.Success) {
+                // get ytVideo id and display it
+                //ako ima ytId, a nema ostalo prikazi ga s error screenom
+                // ako ima ytId i overview prikazi to
+                // ako nema ytId, a ima ostalo prikazi to
+                // ako nema ytId, a nema ostalo prikazi error screen
+                val youtubeId = playTrackOnYoutube(url = info.data!!.track.url)
+                if (youtubeId.isNotBlank() && (info.data.track.wiki == null || info.data.track.album.image == null)) {
+                    AndroidView(factory = {
+                        YouTubePlayerView(context).apply {
+                            addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+                                override fun onReady(youTubePlayer: YouTubePlayer) {
+                                    youTubePlayer.loadVideo(youtubeId, 0f)
+                                }
+                            })
+                        }
+                    }, modifier = Modifier.fillMaxSize(1f))
+                    ErrorDisplayingResultsImage()
+                } else if (youtubeId.isNotBlank() && info.data.track.wiki != null) {
+                    Overview(overview = info.data.track.wiki.summary)
+                } else if (youtubeId.isBlank() && info.data.track.wiki != null && info.data.track.album.image != null) {
+                    ImageItem(
+                        albumCoverArt = info.data.track?.album?.image?.get(2)?.photoUrl
+                            ?: "https://bobjames.com/wp-content/themes/soundcheck/images/default-album-artwork.png",
+                        albumName = info.data.track.name,
+                        albumReleaseDate = info.data.track.wiki?.published ?: "Unknown",
+                        listeners = info.data.track.listeners,
+                    )
+                    Overview(overview = info.data.track.wiki?.summary ?: "")
+                } else {
+                    ErrorDisplayingResultsImage()
+                }
+
             }
-            if (info is Resource.Success){
-                PlayTrackOnYoutube(url = info.data?.track!!.url,info)
-                Overview(overview = info.data?.track?.wiki?.summary ?: "Overview not available")}
         }
     }
 }
+
 
 @Composable
-fun PlayTrackOnYoutube(url: String, info: Resource<TrackInfoResponse>) {
-    val context = LocalContext.current
-    val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-    StrictMode.setThreadPolicy(policy)
-
+fun playTrackOnYoutube(url: String): String {
+    var element: String by rememberSaveable { mutableStateOf("") }
     val composableScope = rememberCoroutineScope()
 
-/*    LaunchedEffect(key1 = Unit, block = {
+    LaunchedEffect(key1 = Unit, block = {
         composableScope.launch {
-
-        }
-    })*/
-    val document = Jsoup.connect(url).get()
-    val element = document.getElementsByAttribute("data-youtube-id").attr("data-youtube-id")
-    if (element.isNotBlank()) {
-        AndroidView(factory = {
-            YouTubePlayerView(context).apply {
-                addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-                    override fun onReady(youTubePlayer: YouTubePlayer) {
-                        youTubePlayer.loadVideo(element, 0f)
-                    }
-                })
+            withContext(Dispatchers.IO) {
+                val document = Jsoup.connect(url).get()
+                element = document.getElementsByAttribute("data-youtube-id").attr("data-youtube-id")
             }
-        }, modifier = Modifier.fillMaxSize(1f))
-    } else {
-        when (info){
-       is Resource.Loading -> ImageItemShimmer()
-            is Resource.Success -> ImageItem(
-                albumCoverArt = info.data?.track?.album?.image?.get(2)?.photoUrl ?: "https://bobjames.com/wp-content/themes/soundcheck/images/default-album-artwork.png",
-                albumName = info.data?.track!!.name,
-                albumReleaseDate = info.data?.track?.wiki?.published ?: "Unknown",
-                listeners = info.data.track.listeners,
-            )
         }
-    }
-}
+    })
 
+    return element
+}

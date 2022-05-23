@@ -3,7 +3,6 @@ package com.example.songkickprojektanz.widgets
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -24,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -32,6 +32,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.example.songkickprojektanz.R
 import com.example.songkickprojektanz.navigation.RootScreen
 import com.example.songkickprojektanz.remote.responses.AlbumInfoResponse
 import com.example.songkickprojektanz.ui.theme.*
@@ -291,6 +292,22 @@ fun ImageItemShimmer() {
 }
 
 @Composable
+fun ErrorDisplayingResultsImage() {
+    Surface(color = colors.primary, modifier = Modifier.fillMaxSize(1f)) {
+        Box(modifier = Modifier.fillMaxSize(1f)) {
+            Image(
+                painter = painterResource(id = R.drawable.no_results),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxHeight(1f)
+                    .fillMaxWidth(1f)
+            )
+        }
+    }
+}
+
+@Composable
 fun ImageItem(
     albumCoverArt: String,
     albumName: String,
@@ -368,7 +385,6 @@ fun ImageItem(
                         .padding(top = 190.dp, start = 10.dp)
                 )
             }
-
         }
     }
 }
@@ -379,28 +395,25 @@ fun Overview(
     overview: String
 ) {
     Surface(color = colors.primary, modifier = Modifier.fillMaxSize(1f)) {
-        LazyColumn(
+        Column(
             verticalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.height(300.dp)
         ) {
-
-            item {
-                SectionText("Overview")
-                Text(
-                    text = overview,
-                    color = colors.onPrimary,
-                    textAlign = TextAlign.Justify,
-                    fontFamily = fonts,
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .padding(
-                            start = 16.dp,
-                            top = 10.dp
-                        )
-                        .fillMaxWidth(.8f),
-                    softWrap = true
-                )
-            }
+            SectionText("Overview")
+            Text(
+                text = overview,
+                color = colors.onPrimary,
+                textAlign = TextAlign.Justify,
+                fontFamily = fonts,
+                fontSize = 14.sp,
+                modifier = Modifier
+                    .padding(
+                        start = 16.dp,
+                        top = 10.dp
+                    )
+                    .fillMaxWidth(.8f),
+                softWrap = true
+            )
         }
     }
 }
