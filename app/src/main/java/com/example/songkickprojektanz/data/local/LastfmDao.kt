@@ -47,5 +47,4 @@ interface LastfmDao {
     @Transaction
     @Query("SELECT * FROM $ARTIST_TABLE where name = :id")
     fun getArtistsTopAlbums(id: String): Flow<ArtistsTopAlbum>
-
 }

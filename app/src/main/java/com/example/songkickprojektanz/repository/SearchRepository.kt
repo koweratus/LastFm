@@ -25,4 +25,3 @@ class SearchRepository@Inject constructor(private val api: LastFmApi) {
         ).flow
     }
 }
-
