@@ -27,7 +27,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -77,7 +76,8 @@ fun HomeScreen(
         val topArtists = viewModel.topArtists.collectAsLazyPagingItems()
 
         val pagerStateFirstTab = rememberPagerState(initialPage = 0)
-        val listSecondTab = listOf(stringResource(R.string.top_artists), stringResource(R.string.search))
+        val listSecondTab =
+            listOf(stringResource(R.string.top_artists), stringResource(R.string.search))
 
         Column(
             modifier = Modifier
@@ -145,7 +145,7 @@ fun Tabs(pagerState: PagerState, list: List<String>) {
 
         },
 
-        modifier = Modifier.padding(start =dimensionResource(id = R.dimen.small_112))
+        modifier = Modifier.padding(start = dimensionResource(id = R.dimen.small_112))
     ) {
         list.forEachIndexed { index, _ ->
             Tab(
@@ -159,7 +159,8 @@ fun Tabs(pagerState: PagerState, list: List<String>) {
                         fontSize = 32.sp,
                         fontFamily = fonts,
                         fontWeight = FontWeight.Bold
-                    )},
+                    )
+                },
                 modifier = Modifier
                     .wrapContentWidth(),
                 selected = pagerState.currentPage == index,
@@ -212,7 +213,7 @@ fun ExpandableCard(
     expanded: Boolean,
     navController: NavController,
     artistName: String,
-    ) {
+) {
     val favouritesViewModel: FavouritesViewModel = hiltViewModel()
     val context = LocalContext.current
 
@@ -335,7 +336,7 @@ fun CardArrow(
                 modifier = Modifier.rotate(degrees),
             )
         },
-        modifier = Modifier.padding(start = dimensionResource(id = R.dimen.large_456))
+        modifier = Modifier.padding(start = dimensionResource(id = R.dimen.large_1064))
     )
 }
 
@@ -391,7 +392,7 @@ fun ExpandableContent(
     ) {
         Column(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(dimensionResource(id = R.dimen.small_100))
         ) {
             Row(
                 modifier = Modifier.clickable(
@@ -409,13 +410,15 @@ fun ExpandableContent(
                                 .data(albumCoverArt)
                                 .build(),
                             filterQuality = FilterQuality.High,
-                            contentScale = ContentScale.FillBounds),
+                            contentScale = ContentScale.FillBounds
+                        ),
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier
-                            .height(50.dp)
-                            .width(50.dp)
-                            .clip(shape = RoundedCornerShape(6.dp)))
+                            .height(dimensionResource(id = R.dimen.large_162))
+                            .width(dimensionResource(id = R.dimen.large_162))
+                            .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.small_75)))
+                    )
                 }
                 Text(
                     text = albumName,
@@ -423,7 +426,8 @@ fun ExpandableContent(
                     color = White,
                     fontFamily = fonts,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 14.sp )
+                    fontSize = 14.sp
+                )
                 FavouriteButton(isLiked =
                 favouritesViewModel.isAlbumFavourite(albumName)
                     .collectAsState(false).value

@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -74,7 +75,7 @@ fun ImageItemShimmer() {
                     indication = rememberRipple(bounded = true, color = Color.Black),
                     onClick = { }
                 )
-                .height(300.dp)
+                .height(dimensionResource(id = R.dimen.large_1089))
                 .placeholder(
                     visible = true,
                     highlight = PlaceholderHighlight.shimmer(
@@ -83,7 +84,7 @@ fun ImageItemShimmer() {
                     color = Color.Gray
                 ),
 
-            elevation = 5.dp
+            elevation = dimensionResource(id = R.dimen.small_75)
         ) {}
     }
 }
@@ -119,10 +120,10 @@ fun ImageItem(
                     indication = rememberRipple(bounded = true, color = Color.Black),
                     onClick = { }
                 )
-                .height(300.dp),
-            elevation = 5.dp
+                .height(dimensionResource(id = R.dimen.large_1089)),
+            elevation = dimensionResource(id = R.dimen.small_75)
         ) {
-            Box(modifier = Modifier.height(10.dp)) {
+            Box(modifier = Modifier.height(dimensionResource(id = R.dimen.small_112))) {
                 Image(
                     painter = rememberAsyncImagePainter(
                         model = ImageRequest.Builder(context = LocalContext.current)
@@ -158,7 +159,7 @@ fun ImageItem(
                     fontSize = 24.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .padding(top = 160.dp, start = 10.dp)
+                        .padding(top = dimensionResource(id = R.dimen.large_768), start = dimensionResource(id = R.dimen.small_100))
                 )
                 Text(
                     text = artistName,
@@ -167,7 +168,7 @@ fun ImageItem(
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .padding(top = 190.dp, start = 10.dp)
+                        .padding(top = dimensionResource(id = R.dimen.large_868), start = dimensionResource(id = R.dimen.small_112))
                 )
             }
         }
@@ -182,7 +183,7 @@ fun Overview(
     Surface(color = colors.primary, modifier = Modifier.fillMaxSize(1f)) {
         Column(
             verticalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.height(300.dp)
+            modifier = Modifier.height(dimensionResource(id = R.dimen.large_1089))
         ) {
             SectionText(stringResource(R.string.overview))
             Text(
@@ -193,8 +194,8 @@ fun Overview(
                 fontSize = 14.sp,
                 modifier = Modifier
                     .padding(
-                        start = 16.dp,
-                        top = 10.dp
+                        start = dimensionResource(id = R.dimen.normal_100),
+                        top = dimensionResource(id = R.dimen.small_112)
                     )
                     .fillMaxWidth(.8f),
                 softWrap = true
@@ -213,7 +214,7 @@ fun SectionText(text: String) {
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
         modifier = Modifier
-            .padding(start = 16.dp)
+            .padding(start = dimensionResource(id = R.dimen.normal_100))
     )
 }
 
@@ -229,8 +230,8 @@ fun SongsItem(
     Surface(color = colors.primaryVariant, modifier = Modifier.fillMaxSize(1f)) {
         Card(
             modifier = Modifier
-                .size(width = 140.dp, height = 220.dp)
-                .padding(horizontal = 5.dp)
+                .size(width = dimensionResource(id = R.dimen.large_750), height = dimensionResource(id = R.dimen.large_870))
+                .padding(horizontal = dimensionResource(id = R.dimen.small_75))
                 .clickable(
                     interactionSource = MutableInteractionSource(),
                     indication = rememberRipple(bounded = true, color = Color.Black),
@@ -238,8 +239,8 @@ fun SongsItem(
                         navController.navigate("${RootScreen.TrackInfo.route}/${artistName}/${trackName}")
                     }
                 ),
-            shape = RoundedCornerShape(6.dp),
-            elevation = 15.dp,
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.small_75)),
+            elevation = dimensionResource(id = R.dimen.normal_100),
             backgroundColor = colors.primaryVariant
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
@@ -256,14 +257,14 @@ fun SongsItem(
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(140.dp)
-                        .clip(shape = RoundedCornerShape(6.dp)),
+                        .height(dimensionResource(id = R.dimen.large_750))
+                        .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.small_75))),
                     contentScale = ContentScale.Crop,
 
                     )
                 Text(
                     modifier = Modifier
-                        .padding(top = 5.dp, start = 5.dp, end = 5.dp),
+                        .padding(top = dimensionResource(id = R.dimen.small_75), start = dimensionResource(id = R.dimen.small_75), end = dimensionResource(id = R.dimen.small_75)),
                     text = trackName,
                     fontSize = 14.sp,
                     fontFamily = fonts,
@@ -272,9 +273,9 @@ fun SongsItem(
                 Text(
                     modifier = Modifier
                         .padding(
-                            top = 5.dp,
-                            start = 5.dp,
-                            end = 5.dp
+                            top = dimensionResource(id = R.dimen.small_75),
+                            start = dimensionResource(id = R.dimen.small_75),
+                            end = dimensionResource(id = R.dimen.small_75)
                         ),
                     text = "${BigDecimal(formattedDuration).setScale(1, RoundingMode.HALF_EVEN)} min",
                     fontSize = 12.sp,
@@ -298,7 +299,7 @@ fun SongsSectionItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(top = 20.dp, bottom = 20.dp)
+                .padding(top =dimensionResource(id = R.dimen.normal_125), bottom = dimensionResource(id = R.dimen.normal_125))
         ) {
             LazyRow(
                 state = rememberLazyListState(),
@@ -307,9 +308,9 @@ fun SongsSectionItem(
                     .wrapContentHeight()
                     .fillMaxWidth()
                     .padding(
-                        top = 5.dp,
-                        start = 16.dp,
-                        end = 16.dp
+                        top = dimensionResource(id = R.dimen.small_75),
+                        start = dimensionResource(id = R.dimen.normal_100),
+                        end = dimensionResource(id = R.dimen.normal_100)
                     )
             ) {
                 list?.albumInfo?.tracks?.let {
@@ -396,12 +397,12 @@ fun ExpandableFavouritesCard(
     val cardPaddingHorizontal by transition.animateDp({
         tween(durationMillis = Constants.EXPAND_ANIMATION_DURATION)
     }, label = "paddingTransition") {
-        if (expanded) 48.dp else 24.dp
+        if (expanded) dimensionResource(id = R.dimen.large_150) else dimensionResource(id = R.dimen.normal_150)
     }
     val cardElevation by transition.animateDp({
         tween(durationMillis = Constants.EXPAND_ANIMATION_DURATION)
     }, label = "elevationTransition") {
-        if (expanded) 24.dp else 4.dp
+        if (expanded) dimensionResource(id = R.dimen.normal_150) else dimensionResource(id = R.dimen.small_50)
     }
     val cardRoundedCorners by transition.animateDp({
         tween(
@@ -409,7 +410,7 @@ fun ExpandableFavouritesCard(
             easing = FastOutSlowInEasing
         )
     }, label = "cornersTransition") {
-        if (expanded) 0.dp else 16.dp
+        if (expanded) dimensionResource(id = R.dimen.small_0) else dimensionResource(id = R.dimen.normal_100)
     }
     val arrowRotationDegree by transition.animateFloat({
         tween(durationMillis = Constants.EXPAND_ANIMATION_DURATION)
@@ -426,7 +427,7 @@ fun ExpandableFavouritesCard(
             .fillMaxWidth()
             .padding(
                 horizontal = cardPaddingHorizontal,
-                vertical = 8.dp
+                vertical = dimensionResource(id = R.dimen.small_100)
             ),
         onClick = onCardArrowClick
     ) {
@@ -529,9 +530,8 @@ fun ExpandableFavouriteContent(
     ) {
         Column(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(dimensionResource(id = R.dimen.small_100))
         ) {
-            //Spacer(modifier = Modifier.heightIn(100.dp))
             Row(
                 modifier = Modifier.clickable(
                     interactionSource = MutableInteractionSource(),
@@ -555,9 +555,9 @@ fun ExpandableFavouriteContent(
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier
-                            .height(50.dp)
-                            .width(50.dp)
-                            .clip(shape = RoundedCornerShape(6.dp))
+                            .height(dimensionResource(id = R.dimen.large_162))
+                            .width(dimensionResource(id = R.dimen.large_162))
+                            .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.small_75)))
                     )
                 }
                 Text(
@@ -596,7 +596,7 @@ fun ExpandableFavouriteContent(
                         }
                     })
             }
-            Divider(color = Grey_light, thickness = 1.dp)
+            Divider(color = Grey_light, thickness = dimensionResource(id = R.dimen.small_1))
         }
     }
 }
