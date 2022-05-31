@@ -36,8 +36,7 @@ fun AlbumInfoScreen(
                 is Resource.Success-> ImageItem(
                     albumCoverArt = info.data?.albumInfo?.image!![5].photoUrl,
                     albumName = info.data.albumInfo.name,
-                    albumReleaseDate = info.data.albumInfo.artist,
-                    listeners = info.data.albumInfo.listeners
+                    artistName = info.data.albumInfo.artist
                 )
             }
             Overview(overview = info.data?.albumInfo?.wiki?.summary.toString())

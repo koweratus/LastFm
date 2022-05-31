@@ -12,7 +12,7 @@ data class Artist(
     @SerializedName("listeners")
     val listeners:  String,
     @SerializedName("playcount")
-    val playCount:  String,
+    val playCount:  String?,
     @SerializedName("mbid")
     val id: String,
     @SerializedName("url")

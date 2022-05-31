@@ -1,6 +1,7 @@
 package com.example.songkickprojektanz.screens.home
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
@@ -40,17 +41,20 @@ import com.example.songkickprojektanz.Constants.EXPAND_ANIMATION_DURATION
 import com.example.songkickprojektanz.Constants.FADE_IN_ANIMATION_DURATION
 import com.example.songkickprojektanz.Constants.FADE_OUT_ANIMATION_DURATION
 import com.example.songkickprojektanz.R
+import com.example.songkickprojektanz.data.local.FavouriteArtist
+import com.example.songkickprojektanz.data.local.FavouriteTopAlbum
 import com.example.songkickprojektanz.model.Artist
 import com.example.songkickprojektanz.navigation.RootScreen
 import com.example.songkickprojektanz.paging.Resource
 import com.example.songkickprojektanz.remote.responses.TopAlbumResponse
+import com.example.songkickprojektanz.screens.favourites.FavouritesViewModel
 import com.example.songkickprojektanz.screens.search.SearchScreen
 import com.example.songkickprojektanz.ui.theme.Black_light
 import com.example.songkickprojektanz.ui.theme.Grey_light
 import com.example.songkickprojektanz.ui.theme.White
 import com.example.songkickprojektanz.utils.fonts
 import com.example.songkickprojektanz.widgets.CustomDialogScrollable
-import com.example.songkickprojektanz.widgets.FavoriteButton
+import com.example.songkickprojektanz.widgets.FavouriteButton
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -274,7 +278,6 @@ fun RowItem(
 
 
             }
-            FavoriteButton(modifier = Modifier.padding(12.dp))
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -300,8 +303,12 @@ fun ExpandableCard(
     onCardArrowClick: () -> Unit,
     expanded: Boolean,
     navController: NavController,
-    artistName: String
+    artistName: String,
+
 ) {
+    val favouritesViewModel: FavouritesViewModel = hiltViewModel()
+    val context = LocalContext.current
+
     val transitionState = remember {
         MutableTransitionState(expanded).apply {
             targetState = !expanded
@@ -362,6 +369,36 @@ fun ExpandableCard(
                     onClick = onCardArrowClick
                 )
                 CardTitle(title = card.name)
+                FavouriteButton(isLiked =
+                favouritesViewModel.isArtistFavourite(card.id)
+                    .collectAsState(false).value
+                        != null,
+                    onClick = { isFav ->
+                        if (isFav) {
+                            favouritesViewModel.deleteOneArtist(card.id)
+                            favouritesViewModel.deleteTopAlbum(card.id)
+                            Toast.makeText(
+                                context,
+                                "Successfully deleted a favourite.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@FavouriteButton
+                        } else {
+                            favouritesViewModel.insertFavorite(
+                                FavouriteArtist(
+                                    favourite = true,
+                                    id = card.id,
+                                    name = card.name,
+                                    listeners = card.listeners,
+                                    playCount = card.playCount ?: "0",
+                                    url = card.url,
+                                    streamable = card.streamable,
+                                ))
+
+                        }
+
+
+                    })
             }
             topAlbums.data?.topAlbums?.album?.take(5)?.forEach {
 
@@ -370,7 +407,9 @@ fun ExpandableCard(
                     albumName = it.name,
                     albumCoverArt = it.image[0].photoUrl,
                     navController = navController,
-                    artistName = artistName
+                    artistName = artistName,
+                    url = it.url,
+                    playcount = it.playcount
                 )
 
             }
@@ -416,9 +455,12 @@ fun ExpandableContent(
     albumName: String,
     albumCoverArt: String,
     navController: NavController,
-    artistName: String
-
+    artistName: String,
+    playcount: Int,
+    url: String,
 ) {
+    val favouritesViewModel: FavouritesViewModel = hiltViewModel()
+    val context = LocalContext.current
     val enterFadeIn = remember {
         fadeIn(
             animationSpec = TweenSpec(
@@ -487,6 +529,35 @@ fun ExpandableContent(
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp
                 )
+                FavouriteButton(isLiked =
+                favouritesViewModel.isAlbumFavourite(albumName)
+                    .collectAsState(false).value
+                        != null,
+                    onClick = { isFav ->
+                        if (isFav) {
+                            favouritesViewModel.deleteTopAlbum(albumName)
+                            Toast.makeText(
+                                context,
+                                "Successfully deleted a favourite.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@FavouriteButton
+                        } else {
+                            favouritesViewModel.insertTopAlbum(
+                                FavouriteTopAlbum(
+                                    favourite = true,
+                                    name = albumName,
+                                    playcount = playcount,
+                                    url = url,
+                                    image = albumCoverArt,
+                                    id = 0,
+                                    artistName = artistName
+                                )
+                            )}
+
+
+                    })
+
             }
             Divider(color = Grey_light, thickness = 1.dp)
         }

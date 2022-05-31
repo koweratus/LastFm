@@ -108,7 +108,7 @@ fun SearchAppBar() {
         },
         maxLines = 1,
         colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
-        placeholder = { Text(text = "hint") },
+        placeholder = { Text(text = "Search for artist...") },
         textStyle = MaterialTheme.typography.subtitle1,
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),

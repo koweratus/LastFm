@@ -64,8 +64,7 @@ fun TrackInfoScreen(
                         albumCoverArt = info.data.track?.album?.image?.get(2)?.photoUrl
                             ?: "https://bobjames.com/wp-content/themes/soundcheck/images/default-album-artwork.png",
                         albumName = info.data.track.name,
-                        albumReleaseDate = info.data.track.wiki?.published ?: "Unknown",
-                        listeners = info.data.track.listeners,
+                        artistName = info.data.track.wiki?.published ?: "Unknown",
                     )
                     Overview(overview = info.data.track.wiki?.summary ?: "")
                 } else {
