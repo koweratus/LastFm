@@ -7,6 +7,5 @@ import dagger.hilt.android.HiltAndroidApp
 class SongkickProjektanzApp : Application() {
     override fun onCreate() {
         super.onCreate()
-
     }
 }

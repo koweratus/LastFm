@@ -26,8 +26,7 @@ fun BottomBarNavigationGraph(
             HomeScreen(rootNavHostController)
         }
         composable(BottomBarScreen.Favourites.route) {
-            FavouriteScreen()
+            FavouriteScreen(rootNavHostController)
         }
-
     }
 }

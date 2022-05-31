@@ -12,7 +12,7 @@ data class Artist(
     @SerializedName("listeners")
     val listeners:  String,
     @SerializedName("playcount")
-    val playCount:  String,
+    val playCount:  String?,
     @SerializedName("mbid")
     val id: String,
     @SerializedName("url")
@@ -21,5 +21,4 @@ data class Artist(
     val streamable: String,
     @SerializedName("image")
     val image: List<Image>
-
 )

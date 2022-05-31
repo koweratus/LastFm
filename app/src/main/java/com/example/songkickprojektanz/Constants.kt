@@ -6,4 +6,8 @@ object Constants {
     const val COLLAPSE_ANIMATION_DURATION = 300
     const val FADE_IN_ANIMATION_DURATION = 350
     const val FADE_OUT_ANIMATION_DURATION = 300
+    const val ARTIST_TABLE = "artist_table"
+    const val TOPALBUM_TABLE = "topalbum_table"
+    const val DATABASE_NAME = "lastfm_database"
+    const val SPLASH_SCREEN_DURATION = 2000L
 }

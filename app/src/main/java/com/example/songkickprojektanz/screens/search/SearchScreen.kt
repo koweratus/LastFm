@@ -1,7 +1,9 @@
 package com.example.songkickprojektanz.screens.search
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -10,21 +12,22 @@ import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import androidx.navigation.NavController
+import com.example.songkickprojektanz.R
 import com.example.songkickprojektanz.screens.home.ExpandableCard
 import com.example.songkickprojektanz.screens.home.HomeViewModel
 
 @Composable
-fun SearchScreen( navController: NavController) {
+fun SearchScreen(navController: NavController) {
     val viewModel: SearchViewModel = hiltViewModel()
     Surface(
         color = MaterialTheme.colors.background
@@ -49,7 +52,7 @@ private fun SearchList(
     val expandedCardIds = homeViewModel.expandedCardIdsList.collectAsState()
 
     LazyColumn(
-        modifier = Modifier.padding(bottom = 48.dp)
+        modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.large_150))
     ) {
 
         items(actorsList) { actor ->
@@ -68,8 +71,8 @@ private fun SearchList(
 fun SearchAppBar() {
     val viewModel: SearchViewModel = hiltViewModel()
 
-    var query: String  by rememberSaveable {mutableStateOf("")}
-    var showClearIcon by rememberSaveable { mutableStateOf(false)}
+    var query: String by rememberSaveable { mutableStateOf("") }
+    var showClearIcon by rememberSaveable { mutableStateOf(false) }
 
     if (query.isEmpty()) {
         showClearIcon = false
@@ -108,7 +111,7 @@ fun SearchAppBar() {
         },
         maxLines = 1,
         colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
-        placeholder = { Text(text = "hint") },
+        placeholder = { Text(text = "Search for artist...") },
         textStyle = MaterialTheme.typography.subtitle1,
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),

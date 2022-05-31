@@ -9,6 +9,11 @@ sealed class RootScreen(
         title = "Main"
     )
 
+    object Splash : RootScreen(
+        route = "splash",
+        title = "Splash"
+    )
+
     object AlbumInfo : RootScreen(
         route = "album_info_screen",
         title = "Album Info"

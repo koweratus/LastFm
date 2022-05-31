@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SongkickProjektanz</string>
+    <string name="deleted_favourite_successfully">Successfully deleted a favourite.</string>
+    <string name="overview">Overview</string>
+    <string name="favourites">Favourites</string>
+    <string name="top_artists">Top Artists</string>
+    <string name="search">Search...</string>
+
 </resources>

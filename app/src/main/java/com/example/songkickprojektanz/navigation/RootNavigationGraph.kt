@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.example.songkickprojektanz.MainScreen
 import com.example.songkickprojektanz.screens.albumDetails.AlbumInfoScreen
 import com.example.songkickprojektanz.screens.search.SearchScreen
+import com.example.songkickprojektanz.screens.splash.SplashScreen
 import com.example.songkickprojektanz.screens.trackDetails.TrackInfoScreen
 
 
@@ -19,9 +20,12 @@ fun RootNavigationGraph(
     rootNavHostController: NavHostController
 ) {
 
-    NavHost(rootNavHostController, startDestination = RootScreen.Main.route) {
+    NavHost(rootNavHostController, startDestination = RootScreen.Splash.route) {
         composable(RootScreen.Main.route) {
             MainScreen(rootNavHostController)
+        }
+        composable(RootScreen.Splash.route) {
+            SplashScreen(rootNavHostController)
         }
         composable(
             route = RootScreen.AlbumInfo.route + "/{${RootScreen.AlbumInfo.ARTIST_NAME}}" + "/{${RootScreen.AlbumInfo.ALBUM_NAME}}",

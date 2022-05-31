@@ -11,7 +11,7 @@ import com.example.songkickprojektanz.remote.responses.AlbumInfoResponse
 import com.example.songkickprojektanz.widgets.ImageItem
 import com.example.songkickprojektanz.widgets.ImageItemShimmer
 import com.example.songkickprojektanz.widgets.Overview
-import com.example.songkickprojektanz.widgets.TopBilledCastSectionItem
+import com.example.songkickprojektanz.widgets.SongsSectionItem
 import com.google.accompanist.pager.ExperimentalPagerApi
 
 
@@ -31,17 +31,16 @@ fun AlbumInfoScreen(
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         item {
-            when(info){
+            when (info) {
                 is Resource.Loading -> ImageItemShimmer()
-                is Resource.Success-> ImageItem(
+                is Resource.Success -> ImageItem(
                     albumCoverArt = info.data?.albumInfo?.image!![5].photoUrl,
                     albumName = info.data.albumInfo.name,
-                    albumReleaseDate = info.data.albumInfo.artist,
-                    listeners = info.data.albumInfo.listeners
+                    artistName = info.data.albumInfo.artist
                 )
             }
             Overview(overview = info.data?.albumInfo?.wiki?.summary.toString())
-            TopBilledCastSectionItem(info.data, navController = navController, artistName)
+            SongsSectionItem(info.data, navController = navController, artistName)
         }
     }
 }

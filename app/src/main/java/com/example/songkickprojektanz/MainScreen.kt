@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,7 +23,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.songkickprojektanz.navigation.BottomBarNavigationGraph
 import com.example.songkickprojektanz.navigation.BottomBarScreen
 import com.example.songkickprojektanz.ui.theme.Black
-import com.example.songkickprojektanz.ui.theme.Black_light
 import com.example.songkickprojektanz.ui.theme.White
 import com.example.songkickprojektanz.utils.fonts
 
@@ -96,8 +96,8 @@ fun TopBar(navController: NavController) {
             .wrapContentSize()
     ) {
         TopAppBar(
-            title = {Text(text = "")
-
+            title = {
+                Text(text = "")
             },
             navigationIcon = if (canPop) {
                 {
@@ -107,14 +107,12 @@ fun TopBar(navController: NavController) {
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = White
-
                         )
                     }
                 }
             } else {
                 null
             },
-
             backgroundColor = Black,
             contentColor = colorResource(R.color.white),
         )
@@ -124,7 +122,7 @@ fun TopBar(navController: NavController) {
             contentScale = ContentScale.Fit,
             modifier = Modifier
                 .align(alignment = Alignment.Center)
-                .height(50.dp)
+                .height(dimensionResource(id = R.dimen.large_162))
                 .fillMaxWidth(.6f)
         )
     }

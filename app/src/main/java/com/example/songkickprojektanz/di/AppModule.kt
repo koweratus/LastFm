@@ -3,6 +3,8 @@ package com.example.songkickprojektanz.di
 import android.app.Application
 import androidx.room.Room
 import com.example.songkickprojektanz.Constants.BASE_URL
+import com.example.songkickprojektanz.Constants.DATABASE_NAME
+import com.example.songkickprojektanz.data.local.LastFmDatabase
 import com.example.songkickprojektanz.remote.LastFmApi
 import dagger.Module
 import dagger.Provides
@@ -52,4 +54,17 @@ object AppModule {
             .create(LastFmApi::class.java)
     }
 
+    @Provides
+    @Singleton // Tell Dagger-Hilt to create a singleton accessible everywhere in ApplicationCompenent (i.e. everywhere in the application)
+    fun provideLastFmDatabase(application: Application): LastFmDatabase {
+        return Room.databaseBuilder(
+            application.applicationContext,
+            LastFmDatabase::class.java,
+            DATABASE_NAME
+        ).fallbackToDestructiveMigration().build() // The reason we can construct a database for the repo
+    }
+
+    @Singleton
+    @Provides
+    fun provideTmdbDao(db: LastFmDatabase) = db.getLastfmDao() // The reason we can implement a Dao for the database
 }

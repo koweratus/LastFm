@@ -8,11 +8,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class AlbumInfoViewModel@Inject constructor(
+class AlbumInfoViewModel @Inject constructor(
     private val albumsRepository: AlbumRepository,
 ) : ViewModel() {
 
     suspend fun initAlbumInfo(artistName: String, albumName: String): Resource<AlbumInfoResponse> {
-        return albumsRepository.getAlbumInfo(artistName,albumName)
+        return albumsRepository.getAlbumInfo(artistName, albumName)
     }
 }

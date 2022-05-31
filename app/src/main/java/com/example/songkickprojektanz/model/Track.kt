@@ -7,5 +7,4 @@ data class Track(
     val name: String,
     @SerializedName("duration")
     val duration: Int
-
 )

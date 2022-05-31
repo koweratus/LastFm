@@ -9,7 +9,6 @@ interface LastFmApi {
 
     @GET("?method=chart.gettopartists")
     suspend fun getTopArtists(
-       // @Query("country") country: String,
         @Query("api_key") apiKey: String = API_KEY,
         @Query("format") format: String = "json",
         @Query("page") page: Int = 1,

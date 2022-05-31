@@ -1,10 +1,10 @@
 package com.example.songkickprojektanz.screens.home
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -17,13 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -40,17 +41,19 @@ import com.example.songkickprojektanz.Constants.EXPAND_ANIMATION_DURATION
 import com.example.songkickprojektanz.Constants.FADE_IN_ANIMATION_DURATION
 import com.example.songkickprojektanz.Constants.FADE_OUT_ANIMATION_DURATION
 import com.example.songkickprojektanz.R
+import com.example.songkickprojektanz.data.local.FavouriteArtist
+import com.example.songkickprojektanz.data.local.FavouriteTopAlbum
 import com.example.songkickprojektanz.model.Artist
 import com.example.songkickprojektanz.navigation.RootScreen
 import com.example.songkickprojektanz.paging.Resource
 import com.example.songkickprojektanz.remote.responses.TopAlbumResponse
+import com.example.songkickprojektanz.screens.favourites.FavouritesViewModel
 import com.example.songkickprojektanz.screens.search.SearchScreen
 import com.example.songkickprojektanz.ui.theme.Black_light
 import com.example.songkickprojektanz.ui.theme.Grey_light
 import com.example.songkickprojektanz.ui.theme.White
 import com.example.songkickprojektanz.utils.fonts
-import com.example.songkickprojektanz.widgets.CustomDialogScrollable
-import com.example.songkickprojektanz.widgets.FavoriteButton
+import com.example.songkickprojektanz.widgets.FavouriteButton
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -74,17 +77,16 @@ fun HomeScreen(
         val topArtists = viewModel.topArtists.collectAsLazyPagingItems()
 
         val pagerStateFirstTab = rememberPagerState(initialPage = 0)
-        val listSecondTab = listOf("Top Artists", "Search...")
+        val listSecondTab = listOf(stringResource(R.string.top_artists), stringResource(R.string.search))
 
         Column(
             modifier = Modifier
                 .fillMaxWidth(1f)
                 .wrapContentHeight()
-                .padding(top = 20.dp),
+                .padding(top = dimensionResource(id = R.dimen.normal_125)),
 
             )
         {
-
             Tabs(pagerState = pagerStateFirstTab, listSecondTab)
             TabsContent(
                 pagerState = pagerStateFirstTab, listSecondTab.size,
@@ -92,18 +94,6 @@ fun HomeScreen(
             )
 
         }
-
-        /*  LazyColumn {
-              items(topArtists) { item ->
-                  ExpandableCard(
-                      card = item!!,
-                      onCardArrowClick = { viewModel.onCardArrowClicked(item.listeners.toInt()) },
-                      expanded = expandedCardIds.value.contains(item.listeners.toInt()),
-                      navController,
-                      artistName = item.name
-                  )
-              }
-          }*/
     }
 }
 
@@ -114,7 +104,6 @@ fun TabsContent(
     expandedCardIds: State<List<Int>>,
     navController: NavController
 ) {
-
     HorizontalPager(count, state = pagerState, verticalAlignment = Alignment.Top) { page ->
         when (page) {
             0 -> RowSectionItem(
@@ -139,27 +128,26 @@ fun Tabs(pagerState: PagerState, list: List<String>) {
         contentColor = Color.White,
         divider = {
             TabRowDefaults.Divider(
-                thickness = 3.dp,
+                thickness = dimensionResource(id = R.dimen.small_50),
                 color = Color.Transparent
             )
         },
-        edgePadding = 0.dp,
+        edgePadding = dimensionResource(id = R.dimen.small_0),
         indicator = { tabPositions ->
             TabRowDefaults.Indicator(
                 Modifier
                     .pagerTabIndicatorOffset(pagerState, tabPositions)
                     .wrapContentWidth(),
-                height = 0.dp,
+                height = dimensionResource(id = R.dimen.small_0),
                 color = Color.Transparent
 
             )
 
         },
 
-        modifier = Modifier.padding(start = 10.dp)
+        modifier = Modifier.padding(start =dimensionResource(id = R.dimen.small_112))
     ) {
         list.forEachIndexed { index, _ ->
-
             Tab(
                 text = {
                     Text(
@@ -171,9 +159,7 @@ fun Tabs(pagerState: PagerState, list: List<String>) {
                         fontSize = 32.sp,
                         fontFamily = fonts,
                         fontWeight = FontWeight.Bold
-                    )
-
-                },
+                    )},
                 modifier = Modifier
                     .wrapContentWidth(),
                 selected = pagerState.currentPage == index,
@@ -188,7 +174,6 @@ fun Tabs(pagerState: PagerState, list: List<String>) {
     }
 }
 
-
 @ExperimentalPagerApi
 @Composable
 fun RowSectionItem(
@@ -196,13 +181,9 @@ fun RowSectionItem(
     viewModel: HomeViewModel,
     expandedCardIds: State<List<Int>>,
     navController: NavController
-
 ) {
-    Column(
-
-    ) {
+    Column {
         LazyColumn(
-            // content padding
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         )
@@ -210,7 +191,6 @@ fun RowSectionItem(
             items(
                 items = list
             ) { item ->
-
                 ExpandableCard(
                     card = item!!,
                     onCardArrowClick = { viewModel.onCardArrowClicked(item.listeners.toInt()) },
@@ -218,76 +198,7 @@ fun RowSectionItem(
                     navController,
                     artistName = item.name
                 )
-
             }
-        }
-    }
-}
-
-@Composable
-fun RowItem(
-    moviesData: Artist
-) {
-    System.out.println(moviesData.name)
-    val showDialog = remember { mutableStateOf(false) }
-    Card(
-        modifier = Modifier
-            .size(width = 250.dp, height = 150.dp)
-            .padding(horizontal = 5.dp, vertical = 5.dp),
-        shape = RoundedCornerShape(15.dp),
-        elevation = 5.dp
-    ) {
-        Box(
-            modifier = Modifier
-                .height(200.dp)
-                .width(250.dp)
-        ) {
-
-            Image(
-                painter = rememberAsyncImagePainter(
-                    model = coil.request.ImageRequest.Builder(context = LocalContext.current)
-                        .crossfade(true)
-                        .data("https://lastfm.freetls.fastly.net/i/u/300x300/3b54885952161aaea4ce2965b2db1638.png")
-                        .build(),
-                    filterQuality = FilterQuality.High,
-                    contentScale = ContentScale.FillBounds
-
-                ),
-                contentDescription = null,
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .clip(shape = RoundedCornerShape(6.dp))
-                    .clickable(
-                        interactionSource = MutableInteractionSource(),
-                        indication = rememberRipple(bounded = true, color = Color.Black),
-                        onClick = {
-                            showDialog.value = true
-                        }
-                    ),
-            )
-            if (showDialog.value) {
-                //AppDialog(dialogState = true, modifier = Modifier.fillMaxSize(.8f))
-                CustomDialogScrollable(
-                    onDismiss = { showDialog.value = false },
-                    onConfirmClicked = { showDialog.value = false })
-
-
-            }
-            FavoriteButton(modifier = Modifier.padding(12.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black
-                            ),
-                            startY = 300f
-                        )
-                    )
-            )
         }
     }
 }
@@ -300,8 +211,11 @@ fun ExpandableCard(
     onCardArrowClick: () -> Unit,
     expanded: Boolean,
     navController: NavController,
-    artistName: String
-) {
+    artistName: String,
+    ) {
+    val favouritesViewModel: FavouritesViewModel = hiltViewModel()
+    val context = LocalContext.current
+
     val transitionState = remember {
         MutableTransitionState(expanded).apply {
             targetState = !expanded
@@ -316,12 +230,12 @@ fun ExpandableCard(
     val cardPaddingHorizontal by transition.animateDp({
         tween(durationMillis = EXPAND_ANIMATION_DURATION)
     }, label = "paddingTransition") {
-        if (expanded) 48.dp else 24.dp
+        if (expanded) dimensionResource(id = R.dimen.large_150) else dimensionResource(id = R.dimen.normal_150)
     }
     val cardElevation by transition.animateDp({
         tween(durationMillis = EXPAND_ANIMATION_DURATION)
     }, label = "elevationTransition") {
-        if (expanded) 24.dp else 4.dp
+        if (expanded) dimensionResource(id = R.dimen.normal_150) else dimensionResource(id = R.dimen.small_50)
     }
     val cardRoundedCorners by transition.animateDp({
         tween(
@@ -329,7 +243,7 @@ fun ExpandableCard(
             easing = FastOutSlowInEasing
         )
     }, label = "cornersTransition") {
-        if (expanded) 0.dp else 16.dp
+        if (expanded) dimensionResource(id = R.dimen.small_0) else dimensionResource(id = R.dimen.normal_100)
     }
     val arrowRotationDegree by transition.animateFloat({
         tween(durationMillis = EXPAND_ANIMATION_DURATION)
@@ -350,7 +264,7 @@ fun ExpandableCard(
             .fillMaxWidth()
             .padding(
                 horizontal = cardPaddingHorizontal,
-                vertical = 8.dp
+                vertical = dimensionResource(id = R.dimen.small_100)
             ),
         onClick = onCardArrowClick
     ) {
@@ -362,6 +276,34 @@ fun ExpandableCard(
                     onClick = onCardArrowClick
                 )
                 CardTitle(title = card.name)
+                FavouriteButton(isLiked =
+                favouritesViewModel.isArtistFavourite(card.id)
+                    .collectAsState(false).value
+                        != null,
+                    onClick = { isFav ->
+                        if (isFav) {
+                            favouritesViewModel.deleteOneArtist(card.id)
+                            favouritesViewModel.deleteTopAlbum(card.id)
+                            Toast.makeText(
+                                context,
+                                R.string.deleted_favourite_successfully,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@FavouriteButton
+                        } else {
+                            favouritesViewModel.insertFavorite(
+                                FavouriteArtist(
+                                    favourite = true,
+                                    id = card.id,
+                                    name = card.name,
+                                    listeners = card.listeners,
+                                    playCount = card.playCount ?: "0",
+                                    url = card.url,
+                                    streamable = card.streamable,
+                                )
+                            )
+                        }
+                    })
             }
             topAlbums.data?.topAlbums?.album?.take(5)?.forEach {
 
@@ -370,14 +312,12 @@ fun ExpandableCard(
                     albumName = it.name,
                     albumCoverArt = it.image[0].photoUrl,
                     navController = navController,
-                    artistName = artistName
+                    artistName = artistName,
+                    url = it.url,
+                    playcount = it.playcount
                 )
-
             }
-
-
         }
-
     }
 }
 
@@ -395,7 +335,7 @@ fun CardArrow(
                 modifier = Modifier.rotate(degrees),
             )
         },
-        modifier = Modifier.padding(start = 270.dp)
+        modifier = Modifier.padding(start = dimensionResource(id = R.dimen.large_456))
     )
 }
 
@@ -405,7 +345,7 @@ fun CardTitle(title: String) {
         text = title,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(dimensionResource(id = R.dimen.normal_100)),
         textAlign = TextAlign.Center,
     )
 }
@@ -416,9 +356,12 @@ fun ExpandableContent(
     albumName: String,
     albumCoverArt: String,
     navController: NavController,
-    artistName: String
-
+    artistName: String,
+    playcount: Int,
+    url: String,
 ) {
+    val favouritesViewModel: FavouritesViewModel = hiltViewModel()
+    val context = LocalContext.current
     val enterFadeIn = remember {
         fadeIn(
             animationSpec = TweenSpec(
@@ -450,15 +393,13 @@ fun ExpandableContent(
             modifier = Modifier
                 .padding(8.dp)
         ) {
-            //Spacer(modifier = Modifier.heightIn(100.dp))
             Row(
                 modifier = Modifier.clickable(
                     interactionSource = MutableInteractionSource(),
                     indication = rememberRipple(bounded = true, color = Color.Black),
                     onClick = {
                         navController.navigate("${RootScreen.AlbumInfo.route}/${artistName}/${albumName}")
-                    }
-                ),
+                    }),
             ) {
                 Box(modifier = Modifier.wrapContentHeight()) {
                     Image(
@@ -468,16 +409,13 @@ fun ExpandableContent(
                                 .data(albumCoverArt)
                                 .build(),
                             filterQuality = FilterQuality.High,
-                            contentScale = ContentScale.FillBounds
-
-                        ),
+                            contentScale = ContentScale.FillBounds),
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier
                             .height(50.dp)
                             .width(50.dp)
-                            .clip(shape = RoundedCornerShape(6.dp))
-                    )
+                            .clip(shape = RoundedCornerShape(6.dp)))
                 }
                 Text(
                     text = albumName,
@@ -485,10 +423,36 @@ fun ExpandableContent(
                     color = White,
                     fontFamily = fonts,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 14.sp
-                )
+                    fontSize = 14.sp )
+                FavouriteButton(isLiked =
+                favouritesViewModel.isAlbumFavourite(albumName)
+                    .collectAsState(false).value
+                        != null,
+                    onClick = { isFav ->
+                        if (isFav) {
+                            favouritesViewModel.deleteTopAlbum(albumName)
+                            Toast.makeText(
+                                context,
+                                "Successfully deleted a favourite.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@FavouriteButton
+                        } else {
+                            favouritesViewModel.insertTopAlbum(
+                                FavouriteTopAlbum(
+                                    favourite = true,
+                                    name = albumName,
+                                    playcount = playcount,
+                                    url = url,
+                                    image = albumCoverArt,
+                                    id = 0,
+                                    artistName = artistName
+                                )
+                            )
+                        }
+                    })
             }
-            Divider(color = Grey_light, thickness = 1.dp)
+            Divider(color = Grey_light, thickness = dimensionResource(id = R.dimen.small_1))
         }
     }
 }

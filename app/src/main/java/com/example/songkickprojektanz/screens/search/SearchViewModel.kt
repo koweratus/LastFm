@@ -19,16 +19,8 @@ class SearchViewModel @Inject constructor(
     private val repository: SearchRepository
 ) : ViewModel() {
 
-    private val _searchTerm = mutableStateOf("")
-    val searchTerm: State<String> = _searchTerm
-
-    fun setSearchTerm(term: String) {
-        _searchTerm.value = term
-    }
-
     private val _searchResult = mutableStateOf<Flow<PagingData<Artist>>>(emptyFlow())
     val searchSearch: State<Flow<PagingData<Artist>>> = _searchResult
-
 
     fun searchAll(searchParam: String) {
         viewModelScope.launch {
