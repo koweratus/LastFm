@@ -2,8 +2,8 @@ package com.example.songkickprojektanz.di
 
 import android.app.Application
 import androidx.room.Room
+import com.example.songkickprojektanz.Constants
 import com.example.songkickprojektanz.Constants.BASE_URL
-import com.example.songkickprojektanz.Constants.DATABASE_NAME
 import com.example.songkickprojektanz.data.local.LastFmDatabase
 import com.example.songkickprojektanz.remote.LastFmApi
 import dagger.Module
@@ -60,7 +60,7 @@ object AppModule {
         return Room.databaseBuilder(
             application.applicationContext,
             LastFmDatabase::class.java,
-            DATABASE_NAME
+            Constants.DATABASE_NAME
         ).fallbackToDestructiveMigration().build() // The reason we can construct a database for the repo
     }
 

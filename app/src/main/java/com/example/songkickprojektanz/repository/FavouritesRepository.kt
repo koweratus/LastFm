@@ -7,7 +7,7 @@ import com.example.songkickprojektanz.data.local.LastfmDao
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class FavouritesRepository @Inject constructor(private val dao: LastfmDao) {
+class FavouritesRepository @Inject constructor(private val dao: LastfmDao){
 
     suspend fun insertArtist(favorite: FavouriteArtist) = dao.insertArtist(favorite)
 
