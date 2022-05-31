@@ -58,7 +58,17 @@ fun TrackInfoScreen(
                     }, modifier = Modifier.fillMaxSize(1f))
                     ErrorDisplayingResultsImage()
                 } else if (youtubeId.isNotBlank() && info.data.track.wiki != null) {
+                    AndroidView(factory = {
+                        YouTubePlayerView(context).apply {
+                            addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+                                override fun onReady(youTubePlayer: YouTubePlayer) {
+                                    youTubePlayer.loadVideo(youtubeId, 0f)
+                                }
+                            })
+                        }
+                    }, modifier = Modifier.fillMaxSize(1f))
                     Overview(overview = info.data.track.wiki.summary)
+                    ErrorDisplayingResultsImage()
                 } else if (youtubeId.isBlank() && info.data.track.wiki != null && info.data.track.album.image != null) {
                     ImageItem(
                         albumCoverArt = info.data.track?.album?.image?.get(2)?.photoUrl

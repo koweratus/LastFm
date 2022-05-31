@@ -60,6 +60,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Composable
 fun ImageItemShimmer() {
@@ -223,6 +225,7 @@ fun SongsItem(
     artistName: String,
     navController: NavController
 ) {
+    val formattedDuration = trackDuration.toDouble() / 60
     Surface(color = colors.primaryVariant, modifier = Modifier.fillMaxSize(1f)) {
         Card(
             modifier = Modifier
@@ -273,7 +276,7 @@ fun SongsItem(
                             start = 5.dp,
                             end = 5.dp
                         ),
-                    text = trackDuration,
+                    text = "${BigDecimal(formattedDuration).setScale(1, RoundingMode.HALF_EVEN)} min",
                     fontSize = 12.sp,
                     fontFamily = fonts,
                     color = colors.onPrimary
